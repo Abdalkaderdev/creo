@@ -10,8 +10,9 @@ interface Props {
   video?: string;
   tone: Tone;
   alt?: string;
+  eager?: boolean;
 }
-const { title, body, poster, video, tone, alt = "" } = Astro.props;
+const { title, body, poster, video, tone, alt = "", eager = false } = Astro.props;
 
 const toneClass: Record<Tone, string> = {
   lavender: "bg-creo-card-lavender text-white",
@@ -34,7 +35,7 @@ const bodyClass: Record<Tone, string> = {
 
 <article
   class:list={[
-    "snap-start shrink-0 w-[300px] sm:w-[340px] h-[78vh] max-h-[640px] rounded-3xl overflow-hidden flex flex-col transition-transform duration-500 will-change-transform",
+    "snap-start shrink-0 w-[280px] sm:w-[340px] h-[60vh] max-h-[560px] sm:h-[78vh] sm:max-h-[640px] rounded-3xl overflow-hidden flex flex-col transition-transform duration-500 will-change-transform",
     toneClass[tone],
   ]}
   data-builtfor-card
@@ -48,24 +49,26 @@ const bodyClass: Record<Tone, string> = {
         muted
         loop
         playsinline
-        preload="metadata"
+        preload="none"
         data-card-video
       ></video>
     ) : poster ? (
       <img
         src={poster}
         alt={alt}
+        loading={eager ? "eager" : "lazy"}
+        decoding="async"
         class="absolute inset-0 h-full w-full object-cover"
       />
     ) : null}
     {video && (
       <button
         type="button"
-        class="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-black/55 text-white backdrop-blur-sm ring-1 ring-white/30 transition hover:bg-black/75"
+        class="absolute right-3 top-3 grid h-11 w-11 place-items-center rounded-full bg-black/55 text-white backdrop-blur-sm ring-1 ring-white/30 transition hover:bg-black/75"
         data-card-toggle
         aria-label="Play preview"
       >
-        <Icon name="lucide:play" class="h-4 w-4" data-icon-play />
+        <Icon name="lucide:play" class="h-5 w-5" data-icon-play />
         <Icon name="lucide:pause" class="h-4 w-4 hidden" data-icon-pause />
       </button>
     )}

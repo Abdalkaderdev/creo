@@ -89,11 +89,11 @@ const features: Array<{
   <div class="md:hidden py-20">
     <div class="mx-auto max-w-6xl px-6">
       <Logo variant="lavender" />
-      <div class="mt-16 text-center">
-        <h2 class="text-5xl font-bold leading-[1.05] tracking-tight text-white">
+      <div class="mt-12 text-center">
+        <h2 class="text-4xl font-bold leading-[1.05] tracking-tight text-white">
           Built For The Things You Make<span class="text-creo-purple-bright">.</span>
         </h2>
-        <p class="mx-auto mt-6 max-w-xl text-base text-white/85">
+        <p class="mx-auto mt-5 max-w-xl text-sm text-white/85">
           Whether you're running solo campaigns or managing a full production team,
           Creo fits the workflow.
         </p>
@@ -101,7 +101,7 @@ const features: Array<{
       <div
         class="mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        {features.map((f) => <BuiltForCard {...f} />)}
+        {features.map((f, i) => <BuiltForCard {...f} eager={i === 0} />)}
       </div>
     </div>
   </div>
@@ -122,13 +122,13 @@ const features: Array<{
     </div>
 
     <div id="builtfor-pinned" class="mt-16">
-      <div class="sticky top-0 flex h-screen items-center overflow-hidden">
+      <div class="sticky top-0 flex h-[100dvh] items-center overflow-hidden">
         <div
           id="builtfor-track"
           class="flex gap-6 will-change-transform"
         >
           <div class="shrink-0 w-[calc(50vw-170px)]" aria-hidden="true"></div>
-          {features.map((f) => <BuiltForCard {...f} />)}
+          {features.map((f, i) => <BuiltForCard {...f} eager={i === 0} />)}
           <div class="shrink-0 w-[calc(50vw-170px)]" aria-hidden="true"></div>
         </div>
       </div>
@@ -157,25 +157,34 @@ const features: Array<{
     });
   });
 
+  // ---- Reduced motion: skip pinned scroll + scale animation ----
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
   // ---- Desktop pinned horizontal scroll ----
   const pin = document.getElementById("builtfor-pinned");
   const track = document.getElementById("builtfor-track");
+  const cards = document.querySelectorAll<HTMLElement>("[data-builtfor-card]");
+
+  function isPinnedMode() {
+    return (
+      window.matchMedia("(min-width: 768px)").matches && !reducedMotion.matches
+    );
+  }
 
   function setPinHeight() {
     if (!pin || !track) return;
-    if (window.matchMedia("(min-width: 768px)").matches) {
-      // Total horizontal travel = trackWidth - viewportWidth
+    if (isPinnedMode()) {
       const travel = Math.max(0, track.scrollWidth - window.innerWidth);
-      // Outer height = viewport + travel, so vertical scroll length matches horizontal
       pin.style.height = `${window.innerHeight + travel}px`;
     } else {
       pin.style.height = "";
+      track.style.transform = "";
     }
   }
 
   function updateTransform() {
     if (!pin || !track) return;
-    if (!window.matchMedia("(min-width: 768px)").matches) {
+    if (!isPinnedMode()) {
       track.style.transform = "";
       return;
     }
@@ -187,8 +196,26 @@ const features: Array<{
     track.style.transform = `translate3d(${-progress * travel}px, 0, 0)`;
   }
 
+  function updateScales() {
+    if (!cards.length) return;
+    if (reducedMotion.matches) {
+      cards.forEach((c) => (c.style.transform = ""));
+      return;
+    }
+    const cx = window.innerWidth / 2;
+    cards.forEach((c) => {
+      const r = c.getBoundingClientRect();
+      const center = r.left + r.width / 2;
+      const dist = Math.min(1, Math.abs(center - cx) / (window.innerWidth / 2));
+      const scale = 1 + (1 - dist) * 0.06;
+      c.style.transform = `scale(${scale.toFixed(3)})`;
+    });
+  }
+
   setPinHeight();
   updateTransform();
+  updateScales();
+
   let ticking = false;
   window.addEventListener(
     "scroll",
@@ -196,6 +223,7 @@ const features: Array<{
       if (!ticking) {
         requestAnimationFrame(() => {
           updateTransform();
+          updateScales();
           ticking = false;
         });
         ticking = true;
@@ -206,21 +234,11 @@ const features: Array<{
   window.addEventListener("resize", () => {
     setPinHeight();
     updateTransform();
+    updateScales();
   });
-
-  // ---- Scale-on-enter: card grows when its center crosses viewport center ----
-  const cards = document.querySelectorAll<HTMLElement>("[data-builtfor-card]");
-  function updateScales() {
-    const cx = window.innerWidth / 2;
-    cards.forEach((c) => {
-      const r = c.getBoundingClientRect();
-      const center = r.left + r.width / 2;
-      const dist = Math.min(1, Math.abs(center - cx) / (window.innerWidth / 2));
-      const scale = 1 + (1 - dist) * 0.06;
-      c.style.transform = `scale(${scale.toFixed(3)})`;
-    });
-  }
-  window.addEventListener("scroll", updateScales, { passive: true });
-  window.addEventListener("resize", updateScales);
-  updateScales();
+  reducedMotion.addEventListener("change", () => {
+    setPinHeight();
+    updateTransform();
+    updateScales();
+  });
 </script>
