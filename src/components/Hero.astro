@@ -11,14 +11,21 @@ const stats = [
 ---
 
 <section class="relative overflow-hidden bg-creo-bg pb-24 pt-8">
-  <div class="absolute inset-0 -z-0" aria-hidden="true">
+  <div class="absolute inset-0 -z-0 overflow-hidden" aria-hidden="true">
     <div class="absolute left-1/2 top-0 h-[520px] w-[1100px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(124,92,255,0.35),transparent_70%)] blur-2xl"></div>
-    <img
-      src="/hero-wave.png"
-      alt=""
-      aria-hidden="true"
+    <video
       class="absolute inset-x-0 bottom-0 w-full select-none object-cover opacity-95"
-    />
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      poster="/hero-wave.png"
+    >
+      <source src="/videos/hero-mobile.mp4" type="video/mp4" media="(max-width: 640px)" />
+      <source src="/videos/hero-720.mp4" type="video/mp4" media="(max-width: 1280px)" />
+      <source src="/videos/hero-1080.mp4" type="video/mp4" />
+    </video>
     <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent to-creo-bg"></div>
   </div>
 

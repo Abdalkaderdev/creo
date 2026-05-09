@@ -10,8 +10,10 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@iconify-json/lucide": "^1.2.106",
     "@tailwindcss/postcss": "^4.2.4",
     "astro": "^6.3.0",
+    "astro-icon": "^1.1.5",
     "tailwindcss": "^4.2.4"
   }
 }

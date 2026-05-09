@@ -1,0 +1,79 @@
+---
+import { Icon } from "astro-icon/components";
+
+type Tone = "lavender" | "white" | "dark";
+
+interface Props {
+  title: string;
+  body: string;
+  poster?: string;
+  video?: string;
+  tone: Tone;
+  alt?: string;
+}
+const { title, body, poster, video, tone, alt = "" } = Astro.props;
+
+const toneClass: Record<Tone, string> = {
+  lavender: "bg-creo-card-lavender text-white",
+  white: "bg-white text-creo-purple shadow-[0_30px_60px_-20px_rgba(0,0,0,0.45)]",
+  dark: "bg-creo-card-dark text-white",
+};
+
+const titleClass: Record<Tone, string> = {
+  lavender: "text-white",
+  white: "text-creo-purple",
+  dark: "text-white",
+};
+
+const bodyClass: Record<Tone, string> = {
+  lavender: "text-white/85",
+  white: "text-creo-purple",
+  dark: "text-white/75",
+};
+---
+
+<article
+  class:list={[
+    "snap-start shrink-0 basis-[300px] sm:basis-[340px] rounded-2xl overflow-hidden flex flex-col transition-transform duration-500 will-change-transform",
+    toneClass[tone],
+  ]}
+  data-builtfor-card
+>
+  <div class="relative aspect-[4/5] bg-gradient-to-br from-creo-purple/40 to-creo-card-dark/60">
+    {video ? (
+      <video
+        src={video}
+        poster={poster}
+        class="absolute inset-0 h-full w-full object-cover"
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        data-card-video
+      ></video>
+    ) : poster ? (
+      <img
+        src={poster}
+        alt={alt}
+        class="absolute inset-0 h-full w-full object-cover"
+      />
+    ) : null}
+    {video && (
+      <button
+        type="button"
+        class="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-black/55 text-white backdrop-blur-sm ring-1 ring-white/30 transition hover:bg-black/75"
+        data-card-toggle
+        aria-label="Play preview"
+      >
+        <Icon name="lucide:play" class="h-4 w-4" data-icon-play />
+        <Icon name="lucide:pause" class="h-4 w-4 hidden" data-icon-pause />
+      </button>
+    )}
+  </div>
+  <div class="flex-1 p-6">
+    <h3 class:list={["whitespace-pre-line text-2xl font-bold leading-tight", titleClass[tone]]}>
+      {title}
+    </h3>
+    <p class:list={["mt-4 text-sm leading-relaxed", bodyClass[tone]]}>{body}</p>
+  </div>
+</article>
