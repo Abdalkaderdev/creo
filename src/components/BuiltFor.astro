@@ -224,12 +224,21 @@ const features: Array<{
       return;
     }
     const cx = window.innerWidth / 2;
-    cards.forEach((c) => {
+    let closestIdx = 0;
+    let closestDist = Infinity;
+    const distances: number[] = [];
+    cards.forEach((c, i) => {
       const r = c.getBoundingClientRect();
       const center = r.left + r.width / 2;
-      const dist = Math.min(1, Math.abs(center - cx) / (window.innerWidth / 2));
-      const scale = 1 + (1 - dist) * 0.06;
-      c.style.transform = `scale(${scale.toFixed(3)})`;
+      const d = Math.abs(center - cx);
+      distances.push(d);
+      if (d < closestDist) {
+        closestDist = d;
+        closestIdx = i;
+      }
+    });
+    cards.forEach((c, i) => {
+      c.style.transform = i === closestIdx ? "scale(1.06)" : "scale(1)";
     });
   }
 
