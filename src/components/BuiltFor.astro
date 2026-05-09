@@ -137,24 +137,48 @@ const features: Array<{
 </section>
 
 <script>
-  // ---- Per-card play/pause toggle (both mobile and desktop) ----
+  // ---- Per-card play/pause toggle (only one video plays at a time) ----
+  type CardCtl = {
+    video: HTMLVideoElement;
+    playIcon: SVGElement | null;
+    pauseIcon: SVGElement | null;
+  };
+  const controllers: CardCtl[] = [];
+
+  function setIcons(c: CardCtl, playing: boolean) {
+    c.playIcon?.classList.toggle("hidden", playing);
+    c.pauseIcon?.classList.toggle("hidden", !playing);
+  }
+
   document.querySelectorAll<HTMLElement>("[data-builtfor-card]").forEach((card) => {
     const btn = card.querySelector<HTMLButtonElement>("[data-card-toggle]");
     const video = card.querySelector<HTMLVideoElement>("[data-card-video]");
     const playIcon = card.querySelector<SVGElement>("[data-icon-play]");
     const pauseIcon = card.querySelector<SVGElement>("[data-icon-pause]");
     if (!btn || !video) return;
+    const ctl: CardCtl = { video, playIcon, pauseIcon };
+    controllers.push(ctl);
+
     btn.addEventListener("click", async () => {
       if (video.paused) {
+        // Pause every other card's video before playing this one
+        controllers.forEach((other) => {
+          if (other.video !== video && !other.video.paused) {
+            other.video.pause();
+            setIcons(other, false);
+          }
+        });
         await video.play().catch(() => {});
-        playIcon?.classList.add("hidden");
-        pauseIcon?.classList.remove("hidden");
+        setIcons(ctl, true);
       } else {
         video.pause();
-        playIcon?.classList.remove("hidden");
-        pauseIcon?.classList.add("hidden");
+        setIcons(ctl, false);
       }
     });
+
+    // Keep icon state in sync if video ends or is paused by other means
+    video.addEventListener("pause", () => setIcons(ctl, false));
+    video.addEventListener("play", () => setIcons(ctl, true));
   });
 
   // ---- Reduced motion: skip pinned scroll + scale animation ----
