@@ -8,13 +8,13 @@
   --color-creo-purple-deep: #5a3fe0;
   --color-creo-purple-band: #6f4dff;
   --color-creo-card: #2a1f6b;
-  --color-creo-card-lavender: #b6a4ff;
-  --color-creo-card-dark: #1a1426;
+  --color-creo-card-lavender: #8052f5;
+  --color-creo-card-dark: #1e1e1e;
   --color-creo-text: #ffffff;
   --color-creo-muted: #b8b2d4;
 
   --font-display: "Inter", system-ui, sans-serif;
-  --font-serif: "Instrument Serif", "Times New Roman", serif;
+  --font-serif: "Gloock", "Instrument Serif", "Times New Roman", serif;
 }
 
 html {
