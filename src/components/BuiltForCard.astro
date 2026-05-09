@@ -34,12 +34,12 @@ const bodyClass: Record<Tone, string> = {
 
 <article
   class:list={[
-    "snap-start shrink-0 basis-[300px] sm:basis-[340px] rounded-3xl overflow-hidden flex flex-col transition-transform duration-500 will-change-transform",
+    "snap-start shrink-0 w-[300px] sm:w-[340px] h-[78vh] max-h-[640px] rounded-3xl overflow-hidden flex flex-col transition-transform duration-500 will-change-transform",
     toneClass[tone],
   ]}
   data-builtfor-card
 >
-  <div class="relative aspect-[4/5] bg-gradient-to-br from-creo-purple/40 to-creo-card-dark/60">
+  <div class="relative flex-1 min-h-0 bg-gradient-to-br from-creo-purple/40 to-creo-card-dark/60">
     {video ? (
       <video
         src={video}
@@ -70,10 +70,10 @@ const bodyClass: Record<Tone, string> = {
       </button>
     )}
   </div>
-  <div class="flex-1 p-6">
-    <h3 class:list={["whitespace-pre-line text-2xl font-bold leading-tight", titleClass[tone]]}>
+  <div class="shrink-0 p-6">
+    <h3 class:list={["whitespace-pre-line text-xl font-bold leading-tight", titleClass[tone]]}>
       {title}
     </h3>
-    <p class:list={["mt-4 text-sm leading-relaxed", bodyClass[tone]]}>{body}</p>
+    <p class:list={["mt-3 text-sm leading-relaxed line-clamp-4", bodyClass[tone]]}>{body}</p>
   </div>
 </article>

@@ -3,14 +3,20 @@ interface Props {
   variant?: "dark" | "light";
 }
 const { variant = "dark" } = Astro.props;
+
 const wrap =
   variant === "dark"
-    ? "bg-white/95 ring-1 ring-white/10"
-    : "bg-white ring-1 ring-black/5";
+    ? "bg-white/10 ring-1 ring-white/25 backdrop-blur-xl shadow-[0_10px_40px_-12px_rgba(0,0,0,0.4)]"
+    : "bg-white/15 ring-1 ring-white/40 backdrop-blur-xl shadow-[0_10px_40px_-12px_rgba(0,0,0,0.25)]";
+
+const inputColor =
+  variant === "dark"
+    ? "text-white placeholder:text-white/60"
+    : "text-white placeholder:text-white/70";
 ---
 
 <form
-  class={`mx-auto flex w-full max-w-md items-center gap-1 rounded-full p-1.5 shadow-[0_10px_40px_-12px_rgba(124,92,255,0.45)] ${wrap}`}
+  class={`mx-auto flex w-full max-w-md items-center gap-1 rounded-full p-1.5 ${wrap}`}
   data-creo-waitlist
 >
   <label for="email" class="sr-only">Email address</label>
@@ -21,11 +27,11 @@ const wrap =
     required
     autocomplete="email"
     placeholder="Enter your email address"
-    class="flex-1 bg-transparent px-4 py-2 text-sm text-neutral-800 placeholder:text-neutral-400 outline-none"
+    class={`flex-1 bg-transparent px-4 py-2 text-sm outline-none ${inputColor}`}
   />
   <button
     type="submit"
-    class="inline-flex items-center gap-1.5 rounded-full bg-creo-purple px-4 py-2 text-sm font-medium text-white transition hover:bg-creo-purple-bright"
+    class="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-creo-purple transition hover:bg-white/90"
   >
     Get Early Access
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">

@@ -106,23 +106,23 @@ const features: Array<{
     </div>
   </div>
 
-  {/* DESKTOP: pinned section, vertical scroll drives horizontal card translation */}
-  <div class="hidden md:block" id="builtfor-pinned">
-    <div class="sticky top-0 flex h-screen flex-col overflow-hidden">
-      <div class="mx-auto w-full max-w-6xl px-6 pt-12">
-        <Logo variant="lavender" />
-        <div class="mt-10 text-center">
-          <h2 class="mx-auto max-w-6xl text-5xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-[5rem]">
-            Built For The Things You Make<span class="text-creo-purple-bright">.</span>
-          </h2>
-          <p class="mx-auto mt-5 max-w-xl text-base text-white/85">
-            Whether you're running solo campaigns or managing a full production team,
-            Creo fits the workflow.
-          </p>
-        </div>
+  {/* DESKTOP: heading scrolls past normally, then cards pin for horizontal scroll */}
+  <div class="hidden md:block">
+    <div class="mx-auto max-w-6xl px-6 pt-16">
+      <Logo variant="lavender" />
+      <div class="mt-12 text-center">
+        <h2 class="mx-auto max-w-6xl text-5xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-[5.5rem]">
+          Built For The Things You Make<span class="text-creo-purple-bright">.</span>
+        </h2>
+        <p class="mx-auto mt-6 max-w-xl text-base text-white/85">
+          Whether you're running solo campaigns or managing a full production team,
+          Creo fits the workflow.
+        </p>
       </div>
+    </div>
 
-      <div class="relative flex-1 flex items-center">
+    <div id="builtfor-pinned" class="mt-16">
+      <div class="sticky top-0 flex h-screen items-center overflow-hidden">
         <div
           id="builtfor-track"
           class="flex gap-6 will-change-transform"
