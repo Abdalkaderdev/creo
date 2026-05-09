@@ -125,10 +125,11 @@ const features: Array<{
       <div class="relative flex-1 flex items-center">
         <div
           id="builtfor-track"
-          class="flex gap-6 pl-12 will-change-transform"
+          class="flex gap-6 will-change-transform"
         >
+          <div class="shrink-0 w-[calc(50vw-170px)]" aria-hidden="true"></div>
           {features.map((f) => <BuiltForCard {...f} />)}
-          <div class="shrink-0 w-12" aria-hidden="true"></div>
+          <div class="shrink-0 w-[calc(50vw-170px)]" aria-hidden="true"></div>
         </div>
       </div>
     </div>
