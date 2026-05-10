@@ -1,8 +1,12 @@
 ---
 interface Props {
   variant?: "dark" | "light";
+  shape?: "pill" | "rect";
 }
-const { variant = "dark" } = Astro.props;
+const { variant = "dark", shape = "pill" } = Astro.props;
+
+const wrapRadius = shape === "rect" ? "rounded-2xl" : "rounded-full";
+const btnRadius = shape === "rect" ? "rounded-xl" : "rounded-full";
 
 const wrap =
   variant === "dark"
@@ -21,7 +25,7 @@ const inputColor =
   novalidate
 >
   <label for="creo-email" class="sr-only">Email address</label>
-  <div class={`flex items-center gap-1 rounded-full p-1.5 transition ${wrap}`} data-creo-pill>
+  <div class={`flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-1 ${wrapRadius} p-1.5 transition ${wrap}`} data-creo-pill>
     <input
       id="creo-email"
       name="email"
@@ -30,11 +34,11 @@ const inputColor =
       autocomplete="email"
       placeholder="Enter your email address"
       aria-describedby="creo-email-msg"
-      class={`flex-1 min-w-0 bg-transparent px-4 py-2.5 text-base outline-none ${inputColor}`}
+      class={`w-full sm:flex-1 sm:min-w-0 bg-transparent px-4 py-2.5 text-base outline-none ${inputColor}`}
     />
     <button
       type="submit"
-      class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-creo-purple transition hover:bg-white/90"
+      class={`inline-flex w-full sm:w-auto sm:shrink-0 items-center justify-center gap-1.5 ${btnRadius} bg-white px-4 py-2.5 text-sm font-semibold text-creo-purple transition hover:bg-white/90`}
     >
       <span data-btn-label>Get Early Access</span>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">

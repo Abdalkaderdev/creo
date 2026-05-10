@@ -1,7 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
 
-type Tone = "lavender" | "white" | "dark";
+type Tone = "lavender" | "white" | "dark" | "purple-gradient";
 
 interface Props {
   title: string;
@@ -18,18 +18,21 @@ const toneClass: Record<Tone, string> = {
   lavender: "bg-creo-card-lavender text-white",
   white: "bg-white text-creo-purple shadow-[0_30px_60px_-20px_rgba(0,0,0,0.45)]",
   dark: "bg-creo-card-dark text-white",
+  "purple-gradient": "bg-[linear-gradient(180deg,#1E1E1E_0%,#4B308F_100%)] text-white",
 };
 
 const titleClass: Record<Tone, string> = {
   lavender: "text-white",
   white: "text-creo-purple",
   dark: "text-white",
+  "purple-gradient": "text-white",
 };
 
 const bodyClass: Record<Tone, string> = {
   lavender: "text-white/85",
   white: "text-creo-purple",
   dark: "text-white/75",
+  "purple-gradient": "text-white/85",
 };
 ---
 
@@ -40,36 +43,38 @@ const bodyClass: Record<Tone, string> = {
   ]}
   data-builtfor-card
 >
-  <div class="relative flex-1 min-h-0 bg-gradient-to-br from-creo-purple/40 to-creo-card-dark/60">
-    {video ? (
+  <div class="relative flex-1 min-h-0 bg-black">
+    {poster && (
+      <img
+        src={poster}
+        alt={alt}
+        loading={eager ? "eager" : "lazy"}
+        decoding="async"
+        class="absolute inset-0 h-full w-full object-cover object-top"
+        data-card-poster
+      />
+    )}
+    {video && (
       <video
         src={video}
         poster={poster}
-        class="absolute inset-0 h-full w-full object-cover"
+        class="absolute inset-0 h-full w-full object-cover object-top opacity-0 transition-opacity duration-300"
         muted
         loop
         playsinline
         preload="none"
         data-card-video
       ></video>
-    ) : poster ? (
-      <img
-        src={poster}
-        alt={alt}
-        loading={eager ? "eager" : "lazy"}
-        decoding="async"
-        class="absolute inset-0 h-full w-full object-cover"
-      />
-    ) : null}
+    )}
     {video && (
       <button
         type="button"
-        class="absolute right-3 top-3 grid h-11 w-11 place-items-center rounded-full bg-black/55 text-white backdrop-blur-sm ring-1 ring-white/30 transition hover:bg-black/75"
+        class="absolute right-3 top-3 grid h-11 w-11 place-items-center text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] transition hover:scale-110"
         data-card-toggle
         aria-label="Play preview"
       >
-        <Icon name="lucide:play" class="h-5 w-5" data-icon-play />
-        <Icon name="lucide:pause" class="h-4 w-4 hidden" data-icon-pause />
+        <Icon name="lucide:play" class="h-7 w-7 fill-white" data-icon-play />
+        <Icon name="lucide:pause" class="h-7 w-7 fill-white hidden" data-icon-pause />
       </button>
     )}
   </div>

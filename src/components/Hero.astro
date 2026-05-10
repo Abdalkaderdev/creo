@@ -1,13 +1,5 @@
 ---
-import Logo from "./Logo.astro";
 import WaitlistForm from "./WaitlistForm.astro";
-
-const stats = [
-  { value: "4K", suffix: "", label: "Image\nOutput", accent: "K" },
-  { value: "1080P", suffix: "", label: "Video\nOutput" },
-  { value: "6+", suffix: "", label: "Best-In-Class\nAI Models" },
-  { value: "500", suffix: "GB", label: "Cloud\nStorage" },
-];
 ---
 
 <section class="relative overflow-hidden bg-creo-bg pb-24 pt-8">
@@ -15,7 +7,7 @@ const stats = [
     <div class="absolute left-1/2 top-0 h-[520px] w-[1100px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(124,92,255,0.35),transparent_70%)] blur-2xl"></div>
     <video
       id="hero-video"
-      class="absolute inset-x-0 bottom-0 w-full select-none object-cover opacity-95"
+      class="absolute inset-x-0 bottom-[35%] w-full select-none object-cover opacity-95 sm:bottom-0"
       muted
       loop
       playsinline
@@ -26,59 +18,26 @@ const stats = [
       <source src="/videos/hero-720.mp4" type="video/mp4" media="(max-width: 1280px)" />
       <source src="/videos/hero-1080.mp4" type="video/mp4" />
     </video>
-    <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent to-creo-bg"></div>
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-creo-bg to-transparent"></div>
+    <div class="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent to-creo-bg"></div>
   </div>
-
-  <button
-    type="button"
-    id="hero-video-toggle"
-    aria-label="Pause background video"
-    aria-pressed="true"
-    class="absolute bottom-5 right-5 z-20 grid h-11 w-11 place-items-center rounded-full bg-white/10 text-white ring-1 ring-white/20 backdrop-blur-md transition hover:bg-white/20"
-  >
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" data-pause><path d="M6 5h4v14H6zM14 5h4v14h-4z" /></svg>
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" data-play class="hidden"><path d="M8 5v14l11-7z" /></svg>
-  </button>
 
   <script is:inline>
     (() => {
       const v = document.getElementById("hero-video");
-      const btn = document.getElementById("hero-video-toggle");
-      if (!v || !btn) return;
-      const playIcon = btn.querySelector("[data-play]");
-      const pauseIcon = btn.querySelector("[data-pause]");
+      if (!v) return;
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      v.currentTime = 0;
       if (!reduced) v.play().catch(() => {});
-      else {
-        pauseIcon.classList.add("hidden");
-        playIcon.classList.remove("hidden");
-        btn.setAttribute("aria-pressed", "false");
-        btn.setAttribute("aria-label", "Play background video");
-      }
-      btn.addEventListener("click", async () => {
-        if (v.paused) {
-          await v.play().catch(() => {});
-          pauseIcon.classList.remove("hidden");
-          playIcon.classList.add("hidden");
-          btn.setAttribute("aria-pressed", "true");
-          btn.setAttribute("aria-label", "Pause background video");
-        } else {
-          v.pause();
-          pauseIcon.classList.add("hidden");
-          playIcon.classList.remove("hidden");
-          btn.setAttribute("aria-pressed", "false");
-          btn.setAttribute("aria-label", "Play background video");
-        }
+      window.addEventListener("pageshow", () => {
+        v.currentTime = 0;
+        if (!reduced) v.play().catch(() => {});
       });
     })();
   </script>
 
   <div class="relative z-10 mx-auto max-w-6xl px-6">
-    <header class="flex items-center justify-between py-2">
-      <Logo />
-    </header>
-
-    <div class="mx-auto max-w-3xl pt-12 text-center sm:pt-20">
+    <div class="mx-auto max-w-3xl pt-24 text-center sm:pt-32">
       <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium uppercase tracking-wider text-white/80 backdrop-blur">
         <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_10px_2px_rgba(52,211,153,0.7)]"></span>
         Now Accepting Early Access
@@ -95,34 +54,49 @@ const stats = [
       </p>
 
       <div class="mt-8">
-        <WaitlistForm />
+        <WaitlistForm shape="rect" />
       </div>
     </div>
 
     <dl class="mx-auto mt-14 grid max-w-3xl grid-cols-2 gap-y-8 sm:mt-20 sm:gap-y-10 sm:grid-cols-4">
       <div class="text-center">
-        <dt class="text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl">
+        <dt class="text-4xl font-black tracking-tight sm:text-5xl md:text-6xl">
           4<span class="text-creo-purple-bright">K</span>
         </dt>
-        <dd class="mt-2 text-xs uppercase tracking-wider text-creo-muted">Image<br />Output</dd>
+        <dd class="mt-2 text-xs font-medium uppercase tracking-wider text-white/70">Image<br />Output</dd>
       </div>
       <div class="text-center">
-        <dt class="text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl">
+        <dt class="text-4xl font-black tracking-tight sm:text-5xl md:text-6xl">
           1080<span class="text-creo-purple-bright">P</span>
         </dt>
-        <dd class="mt-2 text-xs uppercase tracking-wider text-creo-muted">Video<br />Output</dd>
+        <dd class="mt-2 text-xs font-medium uppercase tracking-wider text-white/70">Video<br />Output</dd>
       </div>
       <div class="text-center">
-        <dt class="text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl">
+        <dt class="text-4xl font-black tracking-tight sm:text-5xl md:text-6xl">
           6<span class="text-creo-purple-bright">+</span>
         </dt>
-        <dd class="mt-2 text-xs uppercase tracking-wider text-creo-muted">Best-In-Class<br />AI Models</dd>
+        <dd class="mt-2 text-xs font-medium uppercase tracking-wider text-white/70">Best-In-Class<br />AI Models</dd>
       </div>
       <div class="text-center">
-        <dt class="text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl">
+        <dt class="text-4xl font-black tracking-tight sm:text-5xl md:text-6xl">
           500<span class="text-creo-purple-bright">GB</span>
         </dt>
-        <dd class="mt-2 text-xs uppercase tracking-wider text-creo-muted">Cloud<br />Storage<sup class="text-[0.6em]">©</sup></dd>
+        <dd class="mt-2 inline-flex items-center justify-center gap-1 text-xs font-medium uppercase tracking-wider text-white/70">
+          <span>Cloud<br />Storage</span>
+          <span class="group relative inline-flex">
+            <button
+              type="button"
+              class="grid h-4 w-4 place-items-center rounded-full bg-white/15 text-[10px] font-bold text-white/90 hover:bg-white/25"
+              aria-label="More info about cloud storage"
+            >i</button>
+            <span
+              role="tooltip"
+              class="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 w-56 -translate-x-1/2 rounded-lg bg-creo-bg/95 px-3 py-2 text-[11px] font-normal normal-case tracking-normal text-white opacity-0 ring-1 ring-white/15 backdrop-blur-md transition group-hover:opacity-100 group-focus-within:opacity-100"
+            >
+              Up to 500GB on our Studio plan. Storage varies based on plan.
+            </span>
+          </span>
+        </dd>
       </div>
     </dl>
   </div>

@@ -11,9 +11,7 @@ const { icon, title, body } = Astro.props;
 
 <article class="w-full rounded-2xl bg-[linear-gradient(180deg,#8052F5_0%,#4B308F_100%)] p-7 text-white shadow-[0_24px_60px_-20px_rgba(124,92,255,0.6)] ring-1 ring-white/10">
   <div class="flex items-center gap-3">
-    <span class="grid h-8 w-8 place-items-center rounded-lg bg-white/15 text-white" aria-hidden="true">
-      <Icon name={icon} class="h-5 w-5" />
-    </span>
+    <Icon name={icon} class="h-6 w-6 text-white" aria-hidden="true" />
     <h3 class="text-lg font-semibold">{title}</h3>
   </div>
   <p class="mt-4 text-sm leading-relaxed text-white/90">{body}</p>

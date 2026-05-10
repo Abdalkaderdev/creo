@@ -1,32 +1,20 @@
 ---
-import Logo from "./Logo.astro";
 import IdCard from "./IdCard.astro";
 ---
 
-<section class="relative overflow-hidden bg-[#1E1E1E] pb-28 pt-20">
-  <img
-    src="/glow-ellipse.png"
-    alt=""
-    aria-hidden="true"
-    class="pointer-events-none absolute inset-x-0 top-0 -z-0 mx-auto w-[120%] max-w-none -translate-y-[18%] select-none"
-  />
-
+<section class="relative overflow-hidden bg-[#1E1E1E] pb-28 pt-24">
   <div class="relative z-10 mx-auto max-w-6xl px-6">
-    <div class="flex items-center justify-between">
-      <Logo variant="lavender" />
-    </div>
-
-    <div class="mt-12 sm:mt-16">
-      <h2 class="text-4xl font-bold leading-[0.95] tracking-tight sm:text-6xl md:text-[5.5rem] lg:text-[7rem]">
+    <div class="text-center">
+      <h2 class="mx-auto text-4xl font-black leading-none tracking-tight sm:text-6xl md:text-[5.5rem] lg:text-[7rem]">
         Intelligent Design<span class="text-creo-purple-bright">.</span>
       </h2>
-      <p class="mt-6 max-w-2xl text-sm text-creo-muted sm:mt-8 sm:text-base">
+      <p class="mx-auto mt-6 max-w-2xl text-sm text-creo-muted sm:mt-8 sm:text-base">
         Creo's intelligent workflow tools remove friction and flatten the
         learning curve, allowing you to generate ideas at the speed of your imagination.
       </p>
     </div>
 
-    <div class="mt-16 grid gap-6 md:grid-cols-3 md:gap-8">
+    <div class="mt-16 grid gap-6 md:grid-cols-3 md:gap-8" data-id-grid>
       <IdCard icon="lucide:layout-template" title="Image Presets" body="Built-in prompt templates that give you a strong starting point for diverse creative use cases." />
       <IdCard icon="lucide:bot" title="AI Assistant" body="Troubleshoot unclear prompts, explore new approaches and clarify your intent for more accurate results." />
       <IdCard icon="lucide:wand-sparkles" title="Prompt Enhancer" body="Elevate simple prompts with refined language, added nuance, and richer detail — improving clarity and overall output quality." />
@@ -36,3 +24,31 @@ import IdCard from "./IdCard.astro";
     </div>
   </div>
 </section>
+
+<script>
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const cards = document.querySelectorAll<HTMLElement>("[data-id-grid] > *");
+  if (!reduced && cards.length) {
+    cards.forEach((c) => {
+      c.style.opacity = "0";
+      c.style.transform = "translateY(24px)";
+      c.style.transition = "opacity 600ms ease-out, transform 600ms ease-out";
+    });
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e, i) => {
+          if (e.isIntersecting) {
+            const idx = Array.from(cards).indexOf(e.target as HTMLElement);
+            setTimeout(() => {
+              (e.target as HTMLElement).style.opacity = "1";
+              (e.target as HTMLElement).style.transform = "translateY(0)";
+            }, idx * 80);
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+    cards.forEach((c) => io.observe(c));
+  }
+</script>

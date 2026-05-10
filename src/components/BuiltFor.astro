@@ -1,8 +1,7 @@
 ---
-import Logo from "./Logo.astro";
 import BuiltForCard from "./BuiltForCard.astro";
 
-type Tone = "lavender" | "white" | "dark";
+type Tone = "lavender" | "white" | "dark" | "purple-gradient";
 
 const features: Array<{
   title: string;
@@ -16,7 +15,7 @@ const features: Array<{
     title: "Character\nCreation",
     body: "Design consistent, original characters across styles and formats — from brand mascots to campaign protagonists — without a single illustration brief.",
     poster: "/posters/character-creation.png",
-    tone: "lavender",
+    tone: "purple-gradient",
     alt: "Character creation example",
   },
   {
@@ -85,9 +84,8 @@ const features: Array<{
   {/* MOBILE: vertical heading + horizontal touch carousel */}
   <div class="md:hidden py-20">
     <div class="mx-auto max-w-6xl px-6">
-      <Logo variant="lavender" />
-      <div class="mt-12 text-center">
-        <h2 class="text-4xl font-bold leading-[1.05] tracking-tight text-white">
+      <div class="text-center">
+        <h2 class="text-4xl font-black leading-none tracking-tight text-white">
           Built For The Things You Make<span class="text-creo-purple-bright">.</span>
         </h2>
         <p class="mx-auto mt-5 max-w-xl text-sm text-white/85">
@@ -96,7 +94,7 @@ const features: Array<{
         </p>
       </div>
       <div
-        class="mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        class="-mx-6 mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth px-6 pb-10 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {features.map((f, i) => <BuiltForCard {...f} eager={i === 0} />)}
       </div>
@@ -105,10 +103,9 @@ const features: Array<{
 
   {/* DESKTOP: heading scrolls past normally, then cards pin for horizontal scroll */}
   <div class="hidden md:block">
-    <div class="mx-auto max-w-6xl px-6 pt-16">
-      <Logo variant="lavender" />
-      <div class="mt-12 text-center">
-        <h2 class="mx-auto max-w-6xl text-5xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-[5.5rem]">
+    <div class="mx-auto max-w-7xl px-6 pt-24">
+      <div class="text-center">
+        <h2 class="mx-auto whitespace-nowrap text-5xl font-black leading-none tracking-tight text-white sm:text-6xl lg:text-[5.5rem]">
           Built For The Things You Make<span class="text-creo-purple-bright">.</span>
         </h2>
         <p class="mx-auto mt-6 max-w-xl text-base text-white/85">
@@ -137,6 +134,7 @@ const features: Array<{
   // ---- Per-card play/pause toggle (only one video plays at a time) ----
   type CardCtl = {
     video: HTMLVideoElement;
+    poster: HTMLImageElement | null;
     playIcon: SVGElement | null;
     pauseIcon: SVGElement | null;
   };
@@ -145,23 +143,26 @@ const features: Array<{
   function setIcons(c: CardCtl, playing: boolean) {
     c.playIcon?.classList.toggle("hidden", playing);
     c.pauseIcon?.classList.toggle("hidden", !playing);
+    // Fade video in when playing, fade out (revert to poster) when paused
+    c.video.style.opacity = playing ? "1" : "0";
   }
 
   document.querySelectorAll<HTMLElement>("[data-builtfor-card]").forEach((card) => {
     const btn = card.querySelector<HTMLButtonElement>("[data-card-toggle]");
     const video = card.querySelector<HTMLVideoElement>("[data-card-video]");
+    const poster = card.querySelector<HTMLImageElement>("[data-card-poster]");
     const playIcon = card.querySelector<SVGElement>("[data-icon-play]");
     const pauseIcon = card.querySelector<SVGElement>("[data-icon-pause]");
     if (!btn || !video) return;
-    const ctl: CardCtl = { video, playIcon, pauseIcon };
+    const ctl: CardCtl = { video, poster, playIcon, pauseIcon };
     controllers.push(ctl);
 
     btn.addEventListener("click", async () => {
       if (video.paused) {
-        // Pause every other card's video before playing this one
         controllers.forEach((other) => {
           if (other.video !== video && !other.video.paused) {
             other.video.pause();
+            other.video.currentTime = 0;
             setIcons(other, false);
           }
         });
@@ -173,7 +174,6 @@ const features: Array<{
       }
     });
 
-    // Keep icon state in sync if video ends or is paused by other means
     video.addEventListener("pause", () => setIcons(ctl, false));
     video.addEventListener("play", () => setIcons(ctl, true));
   });
@@ -224,14 +224,14 @@ const features: Array<{
       return;
     }
     const cx = window.innerWidth / 2;
-    let closestIdx = 0;
+    const lastIdx = cards.length - 1;
+    let closestIdx = -1;
     let closestDist = Infinity;
-    const distances: number[] = [];
     cards.forEach((c, i) => {
+      if (i === 0 || i === lastIdx) return;
       const r = c.getBoundingClientRect();
       const center = r.left + r.width / 2;
       const d = Math.abs(center - cx);
-      distances.push(d);
       if (d < closestDist) {
         closestDist = d;
         closestIdx = i;

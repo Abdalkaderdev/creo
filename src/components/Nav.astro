@@ -1,0 +1,35 @@
+---
+---
+
+<nav
+  id="creo-nav"
+  class="fixed inset-x-0 top-0 z-50 transition-colors duration-300"
+  data-creo-nav
+>
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+    <a href="#top" class="inline-flex items-center" aria-label="Creo home">
+      <img src="/creo-logo.svg" alt="Creo" class="h-7 w-auto" />
+    </a>
+    <a
+      href="#waitlist"
+      class="inline-flex items-center rounded-full bg-creo-purple px-4 py-2 text-sm font-semibold text-white transition hover:bg-creo-purple-bright"
+    >
+      Schedule a Demo
+    </a>
+  </div>
+</nav>
+
+<script>
+  const nav = document.getElementById("creo-nav");
+  if (nav) {
+    const update = () => {
+      if (window.scrollY > 24) {
+        nav.classList.add("bg-creo-bg/80", "backdrop-blur-md", "border-b", "border-white/10");
+      } else {
+        nav.classList.remove("bg-creo-bg/80", "backdrop-blur-md", "border-b", "border-white/10");
+      }
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+  }
+</script>
