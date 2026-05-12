@@ -3,33 +3,17 @@
 
 <nav
   id="creo-nav"
-  class="fixed inset-x-0 top-0 z-50 transition-colors duration-300"
-  data-creo-nav
+  class="fixed inset-x-0 top-0 z-50 bg-creo-bg"
 >
-  <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+  <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-3 sm:px-8 sm:py-4">
     <a href="#top" class="inline-flex items-center" aria-label="Creo home">
-      <img src="/creo-logo.svg" alt="Creo" class="h-7 w-auto" />
+      <img src="/creo-logo.svg" alt="Creo" class="h-10 w-auto sm:h-[50px]" />
     </a>
     <a
       href="#waitlist"
-      class="inline-flex items-center rounded-full bg-creo-purple px-4 py-2 text-sm font-semibold text-white transition hover:bg-creo-purple-bright"
+      class="inline-flex items-center rounded-full bg-creo-purple px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_-8px_rgba(124,92,255,0.6)] transition hover:bg-creo-purple-bright sm:px-6 sm:py-3"
     >
-      Schedule a Demo
+      Request a Demo
     </a>
   </div>
 </nav>
-
-<script>
-  const nav = document.getElementById("creo-nav");
-  if (nav) {
-    const update = () => {
-      if (window.scrollY > 24) {
-        nav.classList.add("bg-creo-bg/80", "backdrop-blur-md", "border-b", "border-white/10");
-      } else {
-        nav.classList.remove("bg-creo-bg/80", "backdrop-blur-md", "border-b", "border-white/10");
-      }
-    };
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-  }
-</script>

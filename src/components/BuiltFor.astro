@@ -15,7 +15,7 @@ const features: Array<{
     title: "Character\nCreation",
     body: "Design consistent, original characters across styles and formats — from brand mascots to campaign protagonists — without a single illustration brief.",
     poster: "/posters/character-creation.png",
-    tone: "purple-gradient",
+    tone: "dark",
     alt: "Character creation example",
   },
   {
@@ -88,42 +88,41 @@ const features: Array<{
         <h2 class="text-4xl font-black leading-none tracking-tight text-white">
           Built For The Things You Make<span class="text-creo-purple-bright">.</span>
         </h2>
-        <p class="mx-auto mt-5 max-w-xl text-sm text-white/85">
+        <p class="mx-auto mt-5 max-w-xl text-base font-medium text-white">
           Whether you're running solo campaigns or managing a full production team,
           Creo fits the workflow.
         </p>
       </div>
       <div
-        class="-mx-6 mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth px-6 pb-10 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        class="-mx-6 mt-10 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth px-6 pb-10 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {features.map((f, i) => <BuiltForCard {...f} eager={i === 0} />)}
+        <div class="shrink-0 w-px" aria-hidden="true"></div>
       </div>
     </div>
   </div>
 
   {/* DESKTOP: heading scrolls past normally, then cards pin for horizontal scroll */}
   <div class="hidden md:block">
-    <div class="mx-auto max-w-7xl px-6 pt-24">
+    <div class="mx-auto max-w-7xl px-6 pt-20">
       <div class="text-center">
         <h2 class="mx-auto whitespace-nowrap text-5xl font-black leading-none tracking-tight text-white sm:text-6xl lg:text-[5.5rem]">
           Built For The Things You Make<span class="text-creo-purple-bright">.</span>
         </h2>
-        <p class="mx-auto mt-6 max-w-xl text-base text-white/85">
+        <p class="mx-auto mt-6 max-w-2xl text-lg font-medium text-white">
           Whether you're running solo campaigns or managing a full production team,
           Creo fits the workflow.
         </p>
       </div>
     </div>
 
-    <div id="builtfor-pinned" class="mt-16">
+    <div id="builtfor-pinned" class="mt-8">
       <div class="sticky top-0 flex h-[100dvh] items-center overflow-hidden">
         <div
           id="builtfor-track"
-          class="flex gap-6 will-change-transform"
+          class="flex gap-6 px-6 will-change-transform"
         >
-          <div class="shrink-0 w-[calc(50vw-170px)]" aria-hidden="true"></div>
           {features.map((f, i) => <BuiltForCard {...f} eager={i === 0} />)}
-          <div class="shrink-0 w-[calc(50vw-170px)]" aria-hidden="true"></div>
         </div>
       </div>
     </div>
@@ -131,60 +130,54 @@ const features: Array<{
 </section>
 
 <script>
-  // ---- Per-card play/pause toggle (only one video plays at a time) ----
-  type CardCtl = {
-    video: HTMLVideoElement;
-    poster: HTMLImageElement | null;
-    playIcon: SVGElement | null;
-    pauseIcon: SVGElement | null;
-  };
+  // ---- Hover-to-play (one video at a time, audio enabled) ----
+  type CardCtl = { video: HTMLVideoElement };
   const controllers: CardCtl[] = [];
 
-  function setIcons(c: CardCtl, playing: boolean) {
-    c.playIcon?.classList.toggle("hidden", playing);
-    c.pauseIcon?.classList.toggle("hidden", !playing);
-    // Fade video in when playing, fade out (revert to poster) when paused
-    c.video.style.opacity = playing ? "1" : "0";
-  }
-
   document.querySelectorAll<HTMLElement>("[data-builtfor-card]").forEach((card) => {
-    const btn = card.querySelector<HTMLButtonElement>("[data-card-toggle]");
     const video = card.querySelector<HTMLVideoElement>("[data-card-video]");
-    const poster = card.querySelector<HTMLImageElement>("[data-card-poster]");
-    const playIcon = card.querySelector<SVGElement>("[data-icon-play]");
-    const pauseIcon = card.querySelector<SVGElement>("[data-icon-pause]");
-    if (!btn || !video) return;
-    const ctl: CardCtl = { video, poster, playIcon, pauseIcon };
+    if (!video) return;
+    const ctl: CardCtl = { video };
     controllers.push(ctl);
 
-    btn.addEventListener("click", async () => {
-      if (video.paused) {
-        controllers.forEach((other) => {
-          if (other.video !== video && !other.video.paused) {
-            other.video.pause();
-            other.video.currentTime = 0;
-            setIcons(other, false);
-          }
-        });
-        await video.play().catch(() => {});
-        setIcons(ctl, true);
-      } else {
-        video.pause();
-        setIcons(ctl, false);
+    const startPlay = async () => {
+      controllers.forEach((other) => {
+        if (other.video !== video && !other.video.paused) {
+          other.video.pause();
+          other.video.currentTime = 0;
+          other.video.style.opacity = "0";
+        }
+      });
+      video.muted = false;
+      try {
+        await video.play();
+      } catch {
+        video.muted = true;
+        try { await video.play(); } catch {}
       }
-    });
+      video.style.opacity = "1";
+    };
+    const stopPlay = () => {
+      video.pause();
+      video.currentTime = 0;
+      video.style.opacity = "0";
+    };
 
-    video.addEventListener("pause", () => setIcons(ctl, false));
-    video.addEventListener("play", () => setIcons(ctl, true));
+    card.addEventListener("mouseenter", startPlay);
+    card.addEventListener("mouseleave", stopPlay);
+    card.addEventListener("focusin", startPlay);
+    card.addEventListener("focusout", stopPlay);
+    // Mobile fallback: tap-to-play
+    card.addEventListener("click", () => {
+      if (video.paused) startPlay();
+      else stopPlay();
+    });
   });
 
-  // ---- Reduced motion: skip pinned scroll + scale animation ----
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-
   // ---- Desktop pinned horizontal scroll ----
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const pin = document.getElementById("builtfor-pinned");
   const track = document.getElementById("builtfor-track");
-  const cards = document.querySelectorAll<HTMLElement>("[data-builtfor-card]");
 
   function isPinnedMode() {
     return (
@@ -217,34 +210,8 @@ const features: Array<{
     track.style.transform = `translate3d(${-progress * travel}px, 0, 0)`;
   }
 
-  function updateScales() {
-    if (!cards.length) return;
-    if (reducedMotion.matches) {
-      cards.forEach((c) => (c.style.transform = ""));
-      return;
-    }
-    const cx = window.innerWidth / 2;
-    const lastIdx = cards.length - 1;
-    let closestIdx = -1;
-    let closestDist = Infinity;
-    cards.forEach((c, i) => {
-      if (i === 0 || i === lastIdx) return;
-      const r = c.getBoundingClientRect();
-      const center = r.left + r.width / 2;
-      const d = Math.abs(center - cx);
-      if (d < closestDist) {
-        closestDist = d;
-        closestIdx = i;
-      }
-    });
-    cards.forEach((c, i) => {
-      c.style.transform = i === closestIdx ? "scale(1.06)" : "scale(1)";
-    });
-  }
-
   setPinHeight();
   updateTransform();
-  updateScales();
 
   let ticking = false;
   window.addEventListener(
@@ -253,7 +220,6 @@ const features: Array<{
       if (!ticking) {
         requestAnimationFrame(() => {
           updateTransform();
-          updateScales();
           ticking = false;
         });
         ticking = true;
@@ -264,11 +230,9 @@ const features: Array<{
   window.addEventListener("resize", () => {
     setPinHeight();
     updateTransform();
-    updateScales();
   });
   reducedMotion.addEventListener("change", () => {
     setPinHeight();
     updateTransform();
-    updateScales();
   });
 </script>

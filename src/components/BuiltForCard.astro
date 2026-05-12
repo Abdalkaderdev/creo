@@ -1,6 +1,4 @@
 ---
-import { Icon } from "astro-icon/components";
-
 type Tone = "lavender" | "white" | "dark" | "purple-gradient";
 
 interface Props {
@@ -38,7 +36,7 @@ const bodyClass: Record<Tone, string> = {
 
 <article
   class:list={[
-    "snap-start shrink-0 w-[280px] sm:w-[340px] h-[60vh] max-h-[560px] sm:h-[78vh] sm:max-h-[640px] rounded-3xl overflow-hidden flex flex-col transition-transform duration-500 will-change-transform",
+    "snap-start shrink-0 w-[280px] sm:w-[340px] h-[60vh] max-h-[560px] sm:h-[78vh] sm:max-h-[640px] rounded-3xl overflow-hidden flex flex-col transition-transform duration-300 will-change-transform hover:scale-[1.04]",
     toneClass[tone],
   ]}
   data-builtfor-card
@@ -50,7 +48,7 @@ const bodyClass: Record<Tone, string> = {
         alt={alt}
         loading={eager ? "eager" : "lazy"}
         decoding="async"
-        class="absolute inset-0 h-full w-full object-cover object-top"
+        class="absolute inset-0 h-full w-full object-cover"
         data-card-poster
       />
     )}
@@ -58,24 +56,12 @@ const bodyClass: Record<Tone, string> = {
       <video
         src={video}
         poster={poster}
-        class="absolute inset-0 h-full w-full object-cover object-top opacity-0 transition-opacity duration-300"
-        muted
+        class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-300"
         loop
         playsinline
-        preload="none"
+        preload="metadata"
         data-card-video
       ></video>
-    )}
-    {video && (
-      <button
-        type="button"
-        class="absolute right-3 top-3 grid h-11 w-11 place-items-center text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] transition hover:scale-110"
-        data-card-toggle
-        aria-label="Play preview"
-      >
-        <Icon name="lucide:play" class="h-7 w-7 fill-white" data-icon-play />
-        <Icon name="lucide:pause" class="h-7 w-7 fill-white hidden" data-icon-pause />
-      </button>
     )}
   </div>
   <div class="shrink-0 p-6">
