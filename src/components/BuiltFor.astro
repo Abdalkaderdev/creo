@@ -10,6 +10,7 @@ const features: Array<{
   video?: string;
   tone: Tone;
   alt: string;
+  mediaPosition?: string;
 }> = [
   {
     title: "Character\nCreation",
@@ -40,6 +41,7 @@ const features: Array<{
     video: "/videos/sophia-ugc.mp4?v=3",
     tone: "lavender",
     alt: "UGC example",
+    mediaPosition: "center top",
   },
   {
     title: "B-Roll\nCreation",
@@ -104,7 +106,7 @@ const features: Array<{
 
   {/* DESKTOP: heading scrolls past normally, then cards pin for horizontal scroll */}
   <div class="hidden md:block">
-    <div class="mx-auto max-w-7xl px-6 pt-20">
+    <div class="mx-auto max-w-7xl px-6 pt-32">
       <div class="text-center">
         <h2 class="mx-auto whitespace-nowrap text-5xl font-black leading-none tracking-tight text-white sm:text-6xl lg:text-[5.5rem]">
           Built For The Things You Make<span class="text-creo-purple-bright">.</span>
@@ -116,13 +118,14 @@ const features: Array<{
       </div>
     </div>
 
-    <div id="builtfor-pinned" class="mt-8">
-      <div class="sticky top-0 flex h-[100dvh] items-center overflow-hidden">
+    <div id="builtfor-pinned" class="mt-32">
+      <div class="sticky top-0 flex h-[100dvh] items-center overflow-hidden pt-16">
         <div
           id="builtfor-track"
           class="flex gap-6 px-6 will-change-transform"
         >
           {features.map((f, i) => <BuiltForCard {...f} eager={i === 0} />)}
+          <div class="shrink-0 w-[35vw]" aria-hidden="true"></div>
         </div>
       </div>
     </div>
@@ -130,9 +133,24 @@ const features: Array<{
 </section>
 
 <script>
-  // ---- Hover-to-play (one video at a time, audio enabled) ----
+  // ---- Hover-to-play (one video at a time, audio after first user gesture) ----
   type CardCtl = { video: HTMLVideoElement };
   const controllers: CardCtl[] = [];
+
+  // Global flag: browser only allows unmuted playback after a real user gesture.
+  // Until the user clicks/scrolls/keys once, hover-plays stay muted.
+  let audioUnlocked = false;
+  const unlock = () => {
+    audioUnlocked = true;
+    document.removeEventListener("pointerdown", unlock);
+    document.removeEventListener("keydown", unlock);
+    document.removeEventListener("touchstart", unlock);
+    document.removeEventListener("wheel", unlock);
+  };
+  document.addEventListener("pointerdown", unlock, { passive: true });
+  document.addEventListener("keydown", unlock);
+  document.addEventListener("touchstart", unlock, { passive: true });
+  document.addEventListener("wheel", unlock, { passive: true });
 
   document.querySelectorAll<HTMLElement>("[data-builtfor-card]").forEach((card) => {
     const video = card.querySelector<HTMLVideoElement>("[data-card-video]");
@@ -148,7 +166,7 @@ const features: Array<{
           other.video.style.opacity = "0";
         }
       });
-      video.muted = false;
+      video.muted = !audioUnlocked;
       try {
         await video.play();
       } catch {
