@@ -18,6 +18,7 @@ const features: Array<{
     poster: "/posters/character-creation.png",
     tone: "dark",
     alt: "Character creation example",
+    mediaPosition: "center top",
   },
   {
     title: "Product\nIntegrations",
@@ -25,6 +26,7 @@ const features: Array<{
     poster: "/posters/product-integrations.png",
     tone: "white",
     alt: "Product integration example",
+    mediaPosition: "center top",
   },
   {
     title: "Cinematic\nContent",
@@ -33,6 +35,7 @@ const features: Array<{
     video: "/videos/t-rex.mp4?v=3",
     tone: "dark",
     alt: "Cinematic content example",
+    mediaPosition: "center top",
   },
   {
     title: "User Generated\nContent",
@@ -71,6 +74,7 @@ const features: Array<{
     poster: "/posters/social-media-trends.png",
     tone: "white",
     alt: "Social media trends example",
+    mediaPosition: "center top",
   },
   {
     title: "Asset Library\nExtensions",
@@ -83,6 +87,11 @@ const features: Array<{
 ---
 
 <section class="relative bg-[linear-gradient(180deg,#4B308F_0%,#8052F5_100%)]">
+  {/* MOBILE: soft fade to next section to avoid hard line under cards */}
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-32 bg-gradient-to-b from-transparent to-[#1E1E1E] md:hidden"
+  ></div>
   {/* MOBILE: vertical heading + horizontal touch carousel */}
   <div class="md:hidden py-20">
     <div class="mx-auto max-w-6xl px-6">
@@ -96,8 +105,9 @@ const features: Array<{
         </p>
       </div>
       <div
-        class="-mx-6 mt-10 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pl-10 pr-6 pb-10 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        class="-mx-6 mt-10 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pr-6 pb-10 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [scroll-padding-left:1.5rem]"
       >
+        <div class="shrink-0 w-6" aria-hidden="true"></div>
         {features.map((f, i) => <BuiltForCard {...f} eager={i === 0} />)}
         <div class="shrink-0 w-px" aria-hidden="true"></div>
       </div>
@@ -140,8 +150,12 @@ const features: Array<{
   document.querySelectorAll<HTMLElement>("[data-builtfor-card]").forEach((card) => {
     const video = card.querySelector<HTMLVideoElement>("[data-card-video]");
     if (!video) return;
+    const overlay = card.querySelector<HTMLElement>("[data-card-play-overlay]");
     const ctl: CardCtl = { video };
     controllers.push(ctl);
+
+    const hideOverlay = () => { if (overlay) overlay.style.opacity = "0"; };
+    const showOverlay = () => { if (overlay) overlay.style.opacity = "1"; };
 
     const startPlay = async () => {
       controllers.forEach((other) => {
@@ -149,6 +163,8 @@ const features: Array<{
           other.video.pause();
           other.video.currentTime = 0;
           other.video.style.opacity = "0";
+          const otherOverlay = other.video.parentElement?.querySelector<HTMLElement>("[data-card-play-overlay]");
+          if (otherOverlay) otherOverlay.style.opacity = "1";
         }
       });
       // Try unmuted first; some browsers allow it after any prior user gesture on the page.
@@ -162,11 +178,13 @@ const features: Array<{
         try { await video.play(); } catch {}
       }
       video.style.opacity = "1";
+      hideOverlay();
     };
     const stopPlay = () => {
       video.pause();
       video.currentTime = 0;
       video.style.opacity = "0";
+      showOverlay();
     };
 
     card.addEventListener("mouseenter", startPlay);

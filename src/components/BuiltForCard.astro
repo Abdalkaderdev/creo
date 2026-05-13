@@ -75,6 +75,18 @@ const bodyClass: Record<Tone, string> = {
         data-card-video
       ></video>
     )}
+    {video && (
+      <div
+        class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center transition-opacity duration-200 md:hidden"
+        data-card-play-overlay
+      >
+        <span class="inline-flex h-14 w-14 items-center justify-center rounded-full bg-black/55 ring-1 ring-white/30 backdrop-blur">
+          <svg viewBox="0 0 24 24" fill="white" class="h-6 w-6 translate-x-[1px]" aria-hidden="true">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </span>
+      </div>
+    )}
   </div>
   <div class="shrink-0 h-[220px] sm:h-[240px] p-6">
     <h3 class:list={["whitespace-pre-line text-xl font-bold leading-tight", titleClass[tone]]}>
