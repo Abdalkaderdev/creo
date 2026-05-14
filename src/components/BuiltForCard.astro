@@ -10,6 +10,8 @@ interface Props {
   alt?: string;
   eager?: boolean;
   mediaPosition?: string;
+  videoPosition?: string;
+  inset?: boolean;
 }
 const {
   title,
@@ -20,7 +22,11 @@ const {
   alt = "",
   eager = false,
   mediaPosition = "center",
+  videoPosition,
+  inset = false,
 } = Astro.props;
+
+const resolvedVideoPosition = videoPosition ?? mediaPosition;
 
 const toneClass: Record<Tone, string> = {
   lavender: "bg-creo-card-lavender text-white",
@@ -51,42 +57,44 @@ const bodyClass: Record<Tone, string> = {
   ]}
   data-builtfor-card
 >
-  <div class="relative flex-1 min-h-0 bg-black">
-    {poster && (
-      <img
-        src={poster}
-        alt={alt}
-        loading={eager ? "eager" : "lazy"}
-        decoding="async"
-        style={`object-position: ${mediaPosition}`}
-        class="absolute inset-0 h-full w-full object-cover"
-        data-card-poster
-      />
-    )}
-    {video && (
-      <video
-        src={video}
-        poster={poster}
-        style={`object-position: ${mediaPosition}`}
-        class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-300"
-        loop
-        playsinline
-        preload="metadata"
-        data-card-video
-      ></video>
-    )}
-    {video && (
-      <div
-        class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center transition-opacity duration-200 md:hidden"
-        data-card-play-overlay
-      >
-        <span class="inline-flex h-14 w-14 items-center justify-center rounded-full bg-black/55 ring-1 ring-white/30 backdrop-blur">
-          <svg viewBox="0 0 24 24" fill="white" class="h-6 w-6 translate-x-[1px]" aria-hidden="true">
-            <path d="M8 5v14l11-7z" />
-          </svg>
-        </span>
-      </div>
-    )}
+  <div class:list={["relative flex-1 min-h-0", inset ? "p-3" : "bg-black"]}>
+    <div class:list={["absolute overflow-hidden", inset ? "inset-3 rounded-2xl bg-black" : "inset-0"]}>
+      {poster && (
+        <img
+          src={poster}
+          alt={alt}
+          loading={eager ? "eager" : "lazy"}
+          decoding="async"
+          style={`object-position: ${mediaPosition}`}
+          class="absolute inset-0 h-full w-full object-cover"
+          data-card-poster
+        />
+      )}
+      {video && (
+        <video
+          src={video}
+          poster={poster}
+          style={`object-position: ${resolvedVideoPosition}`}
+          class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-300"
+          loop
+          playsinline
+          preload="metadata"
+          data-card-video
+        ></video>
+      )}
+      {video && (
+        <div
+          class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center transition-opacity duration-200 md:hidden"
+          data-card-play-overlay
+        >
+          <span class="inline-flex h-14 w-14 items-center justify-center rounded-full bg-black/55 ring-1 ring-white/30 backdrop-blur">
+            <svg viewBox="0 0 24 24" fill="white" class="h-6 w-6 translate-x-[1px]" aria-hidden="true">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </span>
+        </div>
+      )}
+    </div>
   </div>
   <div class="shrink-0 h-[220px] sm:h-[240px] p-6">
     <h3 class:list={["whitespace-pre-line text-xl font-bold leading-tight", titleClass[tone]]}>
