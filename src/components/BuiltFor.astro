@@ -109,30 +109,46 @@ const features: Array<{
     </div>
   </div>
 
-  {/* DESKTOP: heading scrolls past normally, then cards pin for horizontal scroll */}
-  <div class="hidden md:block">
-    <div class="mx-auto max-w-7xl px-6 pt-32">
-      <div class="text-center">
-        <h2 class="mx-auto whitespace-nowrap text-5xl font-black leading-none tracking-tight text-white sm:text-6xl lg:text-[5.5rem]">
-          Built For The Things You Make<span class="text-creo-purple-bright">.</span>
-        </h2>
-        <p class="mx-auto mt-6 max-w-2xl text-lg font-medium text-white">
-          Whether you're running solo campaigns or managing a full production team,
-          Creo fits the workflow.
-        </p>
+  {/* DESKTOP: heading + horizontally-scrollable carousel with visible scrollbar and prev/next buttons */}
+  <div class="hidden md:block py-24 lg:py-32">
+    <div class="mx-auto max-w-7xl px-6">
+      <div class="flex items-end justify-between gap-6">
+        <div class="max-w-3xl">
+          <h2 class="text-5xl font-black leading-none tracking-tight text-white sm:text-6xl lg:text-[5.5rem]">
+            Built For The Things You Make<span class="text-creo-purple-bright">.</span>
+          </h2>
+          <p class="mt-6 max-w-2xl text-lg font-medium text-white">
+            Whether you're running solo campaigns or managing a full production team,
+            Creo fits the workflow.
+          </p>
+        </div>
+        <div class="flex shrink-0 items-center gap-3">
+          <button
+            type="button"
+            data-builtfor-prev
+            aria-label="Previous card"
+            class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/20 backdrop-blur transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button
+            type="button"
+            data-builtfor-next
+            aria-label="Next card"
+            class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/20 backdrop-blur transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 6l6 6-6 6"/></svg>
+          </button>
+        </div>
       </div>
     </div>
 
-    <div id="builtfor-pinned" class="mt-12">
-      <div class="sticky top-0 flex h-[100dvh] items-center overflow-hidden pt-20">
-        <div
-          id="builtfor-track"
-          class="flex gap-6 px-6 will-change-transform"
-        >
-          {features.map((f, i) => <BuiltForCard {...f} eager={i === 0} />)}
-          <div class="shrink-0 w-[4vw]" aria-hidden="true"></div>
-        </div>
-      </div>
+    <div
+      data-builtfor-track
+      class="mt-12 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth px-6 pb-6 [scrollbar-color:rgba(255,255,255,0.45)_rgba(255,255,255,0.12)] [scrollbar-width:thin] [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-white/10 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/40 hover:[&::-webkit-scrollbar-thumb]:bg-white/60"
+    >
+      {features.map((f, i) => <BuiltForCard {...f} eager={i === 0} />)}
+      <div class="shrink-0 w-6" aria-hidden="true"></div>
     </div>
   </div>
 </section>
@@ -216,65 +232,34 @@ const features: Array<{
     });
   });
 
-  // ---- Desktop pinned horizontal scroll ----
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const pin = document.getElementById("builtfor-pinned");
-  const track = document.getElementById("builtfor-track");
+  // ---- Desktop prev/next buttons drive the horizontal scroll container ----
+  const track = document.querySelector<HTMLElement>("[data-builtfor-track]");
+  const prevBtn = document.querySelector<HTMLButtonElement>("[data-builtfor-prev]");
+  const nextBtn = document.querySelector<HTMLButtonElement>("[data-builtfor-next]");
 
-  function isPinnedMode() {
-    return (
-      window.matchMedia("(min-width: 768px)").matches && !reducedMotion.matches
-    );
+  function cardStep() {
+    if (!track) return 0;
+    const card = track.querySelector<HTMLElement>("[data-builtfor-card]");
+    if (!card) return 0;
+    const gap = parseFloat(getComputedStyle(track).columnGap || "24") || 24;
+    return card.getBoundingClientRect().width + gap;
   }
 
-  function setPinHeight() {
-    if (!pin || !track) return;
-    if (isPinnedMode()) {
-      const travel = Math.max(0, track.scrollWidth - window.innerWidth);
-      pin.style.height = `${window.innerHeight + travel}px`;
-    } else {
-      pin.style.height = "";
-      track.style.transform = "";
-    }
+  function updateButtons() {
+    if (!track || !prevBtn || !nextBtn) return;
+    const max = track.scrollWidth - track.clientWidth;
+    prevBtn.disabled = track.scrollLeft <= 1;
+    nextBtn.disabled = track.scrollLeft >= max - 1;
   }
 
-  function updateTransform() {
-    if (!pin || !track) return;
-    if (!isPinnedMode()) {
-      track.style.transform = "";
-      return;
-    }
-    const rect = pin.getBoundingClientRect();
-    const totalScroll = pin.offsetHeight - window.innerHeight;
-    if (totalScroll <= 0) return;
-    const progress = Math.min(1, Math.max(0, -rect.top / totalScroll));
-    const travel = track.scrollWidth - window.innerWidth;
-    track.style.transform = `translate3d(${-progress * travel}px, 0, 0)`;
-  }
-
-  setPinHeight();
-  updateTransform();
-
-  let ticking = false;
-  window.addEventListener(
-    "scroll",
-    () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          updateTransform();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    },
-    { passive: true }
-  );
-  window.addEventListener("resize", () => {
-    setPinHeight();
-    updateTransform();
+  prevBtn?.addEventListener("click", () => {
+    track?.scrollBy({ left: -cardStep(), behavior: "smooth" });
   });
-  reducedMotion.addEventListener("change", () => {
-    setPinHeight();
-    updateTransform();
+  nextBtn?.addEventListener("click", () => {
+    track?.scrollBy({ left: cardStep(), behavior: "smooth" });
   });
+
+  track?.addEventListener("scroll", updateButtons, { passive: true });
+  window.addEventListener("resize", updateButtons);
+  updateButtons();
 </script>
