@@ -142,6 +142,24 @@ const features: Array<{
   type CardCtl = { video: HTMLVideoElement };
   const controllers: CardCtl[] = [];
 
+  // Browsers only allow unmuted playback after a user gesture. We listen broadly
+  // (including scroll wheel + touch) so by the time the user reaches the carousel,
+  // audio is already unlocked.
+  let audioUnlocked = false;
+  const unlock = () => {
+    audioUnlocked = true;
+    document.removeEventListener("pointerdown", unlock);
+    document.removeEventListener("keydown", unlock);
+    document.removeEventListener("touchstart", unlock);
+    document.removeEventListener("wheel", unlock);
+    document.removeEventListener("scroll", unlock);
+  };
+  document.addEventListener("pointerdown", unlock, { passive: true });
+  document.addEventListener("keydown", unlock);
+  document.addEventListener("touchstart", unlock, { passive: true });
+  document.addEventListener("wheel", unlock, { passive: true });
+  document.addEventListener("scroll", unlock, { passive: true });
+
   document.querySelectorAll<HTMLElement>("[data-builtfor-card]").forEach((card) => {
     const video = card.querySelector<HTMLVideoElement>("[data-card-video]");
     if (!video) return;
@@ -162,8 +180,7 @@ const features: Array<{
           if (otherOverlay) otherOverlay.style.opacity = "1";
         }
       });
-      // Try unmuted first; some browsers allow it after any prior user gesture on the page.
-      video.muted = false;
+      video.muted = !audioUnlocked;
       video.volume = 1;
       try {
         await video.play();
