@@ -5,9 +5,9 @@ import WaitlistForm from "./WaitlistForm.astro";
 
 <section class="relative overflow-hidden bg-creo-bg pb-24 pt-20 sm:pt-24">
   <div class="absolute inset-0 -z-0 overflow-hidden" aria-hidden="true">
-    <div class="absolute left-1/2 top-0 h-[520px] w-[1100px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(124,92,255,0.35),transparent_70%)] blur-2xl"></div>
+    <div class="absolute left-1/2 top-0 h-[360px] w-[700px] sm:h-[520px] sm:w-[1100px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(124,92,255,0.22),transparent_70%)] sm:bg-[radial-gradient(closest-side,rgba(124,92,255,0.35),transparent_70%)] blur-2xl"></div>
     <div class="absolute inset-x-0 bottom-[34%] sm:bottom-0">
-      <div class="relative">
+      <div class="relative bg-creo-bg">
         <video
           id="hero-video"
           class="block w-full select-none object-cover opacity-95"
@@ -41,6 +41,28 @@ import WaitlistForm from "./WaitlistForm.astro";
         if (!reduced) v.play().catch(() => {});
       });
     })();
+
+    (() => {
+      const tips = document.querySelectorAll("[data-info-tip]");
+      tips.forEach((tip) => {
+        const btn = tip.querySelector("[data-info-tip-button]");
+        const content = tip.querySelector("[data-info-tip-content]");
+        if (!btn || !content) return;
+        const open = (show) => {
+          content.setAttribute("data-open", show ? "true" : "false");
+          btn.setAttribute("aria-expanded", show ? "true" : "false");
+        };
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          open(content.getAttribute("data-open") !== "true");
+        });
+        tip.addEventListener("mouseenter", () => open(true));
+        tip.addEventListener("mouseleave", () => open(false));
+        document.addEventListener("click", (e) => {
+          if (!tip.contains(e.target)) open(false);
+        });
+      });
+    })();
   </script>
 
   <div class="relative z-10 mx-auto max-w-6xl px-6">
@@ -69,38 +91,41 @@ import WaitlistForm from "./WaitlistForm.astro";
         <dt class="text-3xl font-black tracking-tight sm:text-4xl md:text-5xl">
           4<span class="text-creo-purple-bright">K</span>
         </dt>
-        <dd class="mt-3 text-sm font-medium leading-tight" style="color:#6D6D96">Image<br />Output</dd>
+        <dd class="mt-1 text-base font-medium leading-tight sm:mt-3 sm:text-sm" style="color:#6D6D96">Image<br />Output</dd>
       </div>
       <div class="text-center">
         <dt class="text-3xl font-black tracking-tight sm:text-4xl md:text-5xl">
           1080<span class="text-creo-purple-bright">P</span>
         </dt>
-        <dd class="mt-3 text-sm font-medium leading-tight" style="color:#6D6D96">Video<br />Output</dd>
+        <dd class="mt-1 text-base font-medium leading-tight sm:mt-3 sm:text-sm" style="color:#6D6D96">Video<br />Output</dd>
       </div>
       <div class="text-center">
         <dt class="text-3xl font-black tracking-tight sm:text-4xl md:text-5xl">
           6<span class="text-creo-purple-bright">+</span>
         </dt>
-        <dd class="mt-3 text-sm font-medium leading-tight" style="color:#6D6D96">Best-In-Class<br />AI Models</dd>
+        <dd class="mt-1 text-base font-medium leading-tight sm:mt-3 sm:text-sm" style="color:#6D6D96">Best-In-Class<br />AI Models</dd>
       </div>
       <div class="text-center">
         <dt class="text-3xl font-black tracking-tight sm:text-4xl md:text-5xl">
           500<span class="text-creo-purple-bright">GB</span>
         </dt>
-        <dd class="relative mt-3 inline-block text-sm font-medium leading-tight" style="color:#6D6D96">
+        <dd class="relative mt-1 inline-block text-base font-medium leading-tight sm:mt-3 sm:text-sm" style="color:#6D6D96">
           <span>Cloud<br />Storage</span>
-          <span class="group absolute -right-3.5 top-0 inline-flex">
+          <span class="absolute -right-4 top-0 inline-flex" data-info-tip>
             <button
               type="button"
-              class="inline-flex"
+              class="inline-flex cursor-pointer"
               aria-label="More info about cloud storage"
+              aria-expanded="false"
               style="color:#6D6D96"
+              data-info-tip-button
             >
               <Icon name="lucide:info" class="h-3.5 w-3.5" />
             </button>
             <span
               role="tooltip"
-              class="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 w-56 -translate-x-1/2 rounded-lg bg-creo-bg/95 px-3 py-2 text-[11px] font-normal text-white opacity-0 ring-1 ring-white/15 backdrop-blur-md transition group-hover:opacity-100 group-focus-within:opacity-100"
+              class="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 w-56 -translate-x-1/2 rounded-lg bg-creo-bg/95 px-3 py-2 text-[11px] font-normal text-white opacity-0 ring-1 ring-white/15 backdrop-blur-md transition data-[open=true]:opacity-100"
+              data-info-tip-content
             >
               Up to 500GB on our Studio plan. Storage varies based on plan.
             </span>

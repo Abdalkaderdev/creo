@@ -16,13 +16,13 @@ const features: Array<{
     title: "Character\nCreation",
     body: "Design consistent, original characters across styles and formats — from brand mascots to campaign protagonists — without a single illustration brief.",
     poster: "/posters/character-creation.png",
-    tone: "dark",
+    tone: "lavender",
     alt: "Character creation example",
     mediaPosition: "center top",
   },
   {
     title: "Product\nIntegrations",
-    body: "Studio-quality visuals without the studio. Generate photorealistic, film-grade imagery and footage that elevates every piece of content you put out.",
+    body: "Place your products into any scene, environment, or context. Photorealistic compositing at the speed of a prompt.",
     poster: "/posters/product-integrations.png",
     tone: "white",
     alt: "Product integration example",
@@ -87,11 +87,6 @@ const features: Array<{
 ---
 
 <section class="relative bg-[linear-gradient(180deg,#4B308F_0%,#8052F5_100%)]">
-  {/* MOBILE: soft fade to next section to avoid hard line under cards */}
-  <div
-    aria-hidden="true"
-    class="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-32 bg-gradient-to-b from-transparent to-[#1E1E1E] md:hidden"
-  ></div>
   {/* MOBILE: vertical heading + horizontal touch carousel */}
   <div class="md:hidden py-20">
     <div class="mx-auto max-w-6xl px-6">
@@ -105,7 +100,7 @@ const features: Array<{
         </p>
       </div>
       <div
-        class="-mx-6 mt-10 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pr-6 pb-10 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [scroll-padding-left:1.5rem]"
+        class="-mx-6 mt-10 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pr-6 pb-28 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [scroll-padding-left:1.5rem]"
       >
         <div class="shrink-0 w-6" aria-hidden="true"></div>
         {features.map((f, i) => <BuiltForCard {...f} eager={i === 0} />)}
@@ -129,7 +124,7 @@ const features: Array<{
     </div>
 
     <div id="builtfor-pinned" class="mt-12">
-      <div class="sticky top-0 flex h-[100dvh] items-center overflow-hidden">
+      <div class="sticky top-0 flex h-[100dvh] items-center overflow-hidden pt-20">
         <div
           id="builtfor-track"
           class="flex gap-6 px-6 will-change-transform"
