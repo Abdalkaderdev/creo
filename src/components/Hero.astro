@@ -1,5 +1,4 @@
 ---
-import { Icon } from "astro-icon/components";
 import WaitlistForm from "./WaitlistForm.astro";
 ---
 
@@ -42,27 +41,6 @@ import WaitlistForm from "./WaitlistForm.astro";
       });
     })();
 
-    (() => {
-      const tips = document.querySelectorAll("[data-info-tip]");
-      tips.forEach((tip) => {
-        const btn = tip.querySelector("[data-info-tip-button]");
-        const content = tip.querySelector("[data-info-tip-content]");
-        if (!btn || !content) return;
-        const open = (show) => {
-          content.setAttribute("data-open", show ? "true" : "false");
-          btn.setAttribute("aria-expanded", show ? "true" : "false");
-        };
-        btn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          open(content.getAttribute("data-open") !== "true");
-        });
-        tip.addEventListener("mouseenter", () => open(true));
-        tip.addEventListener("mouseleave", () => open(false));
-        document.addEventListener("click", (e) => {
-          if (!tip.contains(e.target)) open(false);
-        });
-      });
-    })();
   </script>
 
   <div class="relative z-10 mx-auto max-w-6xl px-6">
@@ -109,28 +87,7 @@ import WaitlistForm from "./WaitlistForm.astro";
         <dt class="text-3xl font-black tracking-tight sm:text-4xl md:text-5xl">
           500<span class="text-creo-purple-bright">GB</span>
         </dt>
-        <dd class="relative mt-1 inline-block text-base font-medium leading-tight sm:mt-3 sm:text-sm" style="color:#6D6D96">
-          <span>Cloud<br />Storage</span>
-          <span class="absolute -right-4 top-0 inline-flex" data-info-tip>
-            <button
-              type="button"
-              class="inline-flex cursor-pointer"
-              aria-label="More info about cloud storage"
-              aria-expanded="false"
-              style="color:#6D6D96"
-              data-info-tip-button
-            >
-              <Icon name="lucide:info" class="h-3.5 w-3.5" />
-            </button>
-            <span
-              role="tooltip"
-              class="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 w-56 -translate-x-1/2 rounded-lg bg-creo-bg/95 px-3 py-2 text-[11px] font-normal text-white opacity-0 ring-1 ring-white/15 backdrop-blur-md transition data-[open=true]:opacity-100"
-              data-info-tip-content
-            >
-              Up to 500GB on our Studio plan. Storage varies based on plan.
-            </span>
-          </span>
-        </dd>
+        <dd class="mt-1 text-base font-medium leading-tight sm:mt-3 sm:text-sm" style="color:#6D6D96">Cloud<br />Storage</dd>
       </div>
     </dl>
   </div>
