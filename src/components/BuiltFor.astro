@@ -164,6 +164,10 @@ const features: Array<{
   type CardCtl = { video: HTMLVideoElement };
   const controllers: CardCtl[] = [];
 
+  // Touch devices synthesize mouseenter on tap, which raced with click and made the
+  // first tap play-then-stop. Only bind hover handlers when the device actually hovers.
+  const supportsHover = window.matchMedia("(hover: hover)").matches;
+
   document.querySelectorAll<HTMLElement>("[data-builtfor-card]").forEach((card) => {
     const video = card.querySelector<HTMLVideoElement>("[data-card-video]");
     if (!video) return;
@@ -196,10 +200,12 @@ const features: Array<{
       showOverlay();
     };
 
-    card.addEventListener("mouseenter", startPlay);
-    card.addEventListener("mouseleave", stopPlay);
-    card.addEventListener("focusin", startPlay);
-    card.addEventListener("focusout", stopPlay);
+    if (supportsHover) {
+      card.addEventListener("mouseenter", startPlay);
+      card.addEventListener("mouseleave", stopPlay);
+      card.addEventListener("focusin", startPlay);
+      card.addEventListener("focusout", stopPlay);
+    }
     card.addEventListener("click", (e) => {
       if ((e.target as HTMLElement).closest("[data-card-mute-toggle]")) return;
       if (video.paused) startPlay(); else stopPlay();
