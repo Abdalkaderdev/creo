@@ -91,6 +91,26 @@ const bodyClass: Record<Tone, string> = {
         </span>
       </div>
     )}
+    {video && (
+      <button
+        type="button"
+        aria-label="Toggle audio"
+        class="absolute bottom-3 right-3 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-white ring-1 ring-white/25 backdrop-blur transition hover:bg-black/75"
+        data-card-mute-toggle
+        data-muted="true"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true" data-icon="muted">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <line x1="22" y1="9" x2="16" y2="15"></line>
+          <line x1="16" y1="9" x2="22" y2="15"></line>
+        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden h-4 w-4" aria-hidden="true" data-icon="unmuted">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+        </svg>
+      </button>
+    )}
   </div>
   <div class="shrink-0 h-[220px] sm:h-[240px] p-6">
     <h3 class:list={["whitespace-pre-line text-xl font-bold leading-tight", titleClass[tone]]}>

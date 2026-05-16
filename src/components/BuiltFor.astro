@@ -94,7 +94,7 @@ const features: Array<{
     <div class="mx-auto max-w-6xl px-6">
       <div class="text-center">
         <h2 class="text-4xl font-black leading-none tracking-tight text-white">
-          Built For The Things You Make<span class="text-creo-purple-bright">.</span>
+          Built for the Things<br />You Make<span class="text-creo-purple-bright">.</span>
         </h2>
         <p class="mx-auto mt-5 max-w-md text-sm font-medium text-white">
           Whether you're running solo campaigns or managing a full production team,
@@ -102,7 +102,7 @@ const features: Array<{
         </p>
       </div>
       <div
-        class="-mx-6 mt-10 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pr-6 pb-12 pt-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [scroll-padding-left:1.5rem]"
+        class="-mx-6 mt-10 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pr-6 pb-20 pt-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [scroll-padding-left:1.5rem]"
       >
         <div class="shrink-0 w-6" aria-hidden="true"></div>
         {features.map((f, i) => <BuiltForCard {...f} eager={i === 0} />)}
@@ -112,11 +112,11 @@ const features: Array<{
   </div>
 
   {/* DESKTOP: heading + horizontally-scrollable carousel with visible scrollbar */}
-  <div class="hidden md:block pt-24 lg:pt-32 pb-16">
+  <div class="hidden md:block pt-24 lg:pt-32 pb-10">
     <div class="mx-auto max-w-7xl px-6">
       <div class="text-center">
         <h2 class="text-5xl font-black leading-none tracking-tight text-white sm:text-6xl lg:text-[5.5rem]">
-          Built For The Things You Make<span class="text-creo-purple-bright">.</span>
+          Built for the Things<br />You Make<span class="text-creo-purple-bright">.</span>
         </h2>
         <p class="mx-auto mt-6 max-w-2xl text-lg font-medium text-white">
           Whether you're running solo campaigns or managing a full production team,
@@ -127,7 +127,7 @@ const features: Array<{
 
     <div
       data-builtfor-track
-      class="mt-12 flex snap-x snap-mandatory gap-6 overflow-x-auto overflow-y-visible scroll-smooth px-6 pt-8 pb-10 [scrollbar-color:rgba(255,255,255,0.45)_rgba(255,255,255,0.12)] [scrollbar-width:thin] [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-white/10 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/40 hover:[&::-webkit-scrollbar-thumb]:bg-white/60"
+      class="mt-12 flex snap-x snap-mandatory gap-6 overflow-x-auto overflow-y-visible scroll-smooth px-6 pt-12 pb-24 [scrollbar-color:rgba(255,255,255,0.45)_rgba(255,255,255,0.12)] [scrollbar-width:thin] [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-white/10 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/40 hover:[&::-webkit-scrollbar-thumb]:bg-white/60"
     >
       {features.map((f, i) => <BuiltForCard {...f} eager={i === 0} />)}
       <div class="shrink-0 w-6" aria-hidden="true"></div>
@@ -136,34 +136,39 @@ const features: Array<{
 </section>
 
 <script>
-  // ---- Hover-to-play (one video at a time; try unmuted then fall back to muted) ----
+  // Global mute state for all video cards. Default muted so browsers permit autoplay;
+  // the per-card mute toggle flips it for everyone.
+  let globalMuted = true;
+
+  function syncMuteToggleUI() {
+    document.querySelectorAll<HTMLElement>("[data-card-mute-toggle]").forEach((btn) => {
+      btn.dataset.muted = globalMuted ? "true" : "false";
+      const mutedIcon = btn.querySelector<HTMLElement>('[data-icon="muted"]');
+      const unmutedIcon = btn.querySelector<HTMLElement>('[data-icon="unmuted"]');
+      mutedIcon?.classList.toggle("hidden", !globalMuted);
+      unmutedIcon?.classList.toggle("hidden", globalMuted);
+    });
+  }
+
+  document.querySelectorAll<HTMLButtonElement>("[data-card-mute-toggle]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      globalMuted = !globalMuted;
+      syncMuteToggleUI();
+      document.querySelectorAll<HTMLVideoElement>("[data-card-video]").forEach((v) => {
+        v.muted = globalMuted;
+      });
+    });
+  });
+
   type CardCtl = { video: HTMLVideoElement };
   const controllers: CardCtl[] = [];
-
-  // Browsers only allow unmuted playback after a user gesture. We listen broadly
-  // (including scroll wheel + touch) so by the time the user reaches the carousel,
-  // audio is already unlocked.
-  let audioUnlocked = false;
-  const unlock = () => {
-    audioUnlocked = true;
-    document.removeEventListener("pointerdown", unlock);
-    document.removeEventListener("keydown", unlock);
-    document.removeEventListener("touchstart", unlock);
-    document.removeEventListener("wheel", unlock);
-    document.removeEventListener("scroll", unlock);
-  };
-  document.addEventListener("pointerdown", unlock, { passive: true });
-  document.addEventListener("keydown", unlock);
-  document.addEventListener("touchstart", unlock, { passive: true });
-  document.addEventListener("wheel", unlock, { passive: true });
-  document.addEventListener("scroll", unlock, { passive: true });
 
   document.querySelectorAll<HTMLElement>("[data-builtfor-card]").forEach((card) => {
     const video = card.querySelector<HTMLVideoElement>("[data-card-video]");
     if (!video) return;
     const overlay = card.querySelector<HTMLElement>("[data-card-play-overlay]");
-    const ctl: CardCtl = { video };
-    controllers.push(ctl);
+    controllers.push({ video });
 
     const hideOverlay = () => { if (overlay) overlay.style.opacity = "0"; };
     const showOverlay = () => { if (overlay) overlay.style.opacity = "1"; };
@@ -178,15 +183,9 @@ const features: Array<{
           if (otherOverlay) otherOverlay.style.opacity = "1";
         }
       });
-      video.muted = !audioUnlocked;
+      video.muted = globalMuted;
       video.volume = 1;
-      try {
-        await video.play();
-      } catch {
-        // Browser blocked unmuted autoplay — fall back to muted so something still plays.
-        video.muted = true;
-        try { await video.play(); } catch {}
-      }
+      try { await video.play(); } catch {}
       video.style.opacity = "1";
       hideOverlay();
     };
@@ -201,17 +200,11 @@ const features: Array<{
     card.addEventListener("mouseleave", stopPlay);
     card.addEventListener("focusin", startPlay);
     card.addEventListener("focusout", stopPlay);
-    // Click guarantees user activation — unmute and restart with sound.
-    card.addEventListener("click", () => {
-      if (video.paused) {
-        startPlay();
-      } else if (video.muted) {
-        video.muted = false;
-        video.volume = 1;
-      } else {
-        stopPlay();
-      }
+    card.addEventListener("click", (e) => {
+      if ((e.target as HTMLElement).closest("[data-card-mute-toggle]")) return;
+      if (video.paused) startPlay(); else stopPlay();
     });
   });
 
+  syncMuteToggleUI();
 </script>
