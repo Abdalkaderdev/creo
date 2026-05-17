@@ -11,6 +11,7 @@ interface Props {
   eager?: boolean;
   mediaPosition?: string;
   videoPosition?: string;
+  padLeft?: boolean;
 }
 const {
   title,
@@ -22,6 +23,7 @@ const {
   eager = false,
   mediaPosition = "center",
   videoPosition,
+  padLeft = false,
 } = Astro.props;
 
 const resolvedVideoPosition = videoPosition ?? mediaPosition;
@@ -55,7 +57,7 @@ const bodyClass: Record<Tone, string> = {
   ]}
   data-builtfor-card
 >
-  <div class="relative flex-1 min-h-0 bg-black">
+  <div class:list={["relative flex-1 min-h-0", padLeft ? "" : "bg-black"]}>
     {poster && (
       <img
         src={poster}
@@ -63,7 +65,10 @@ const bodyClass: Record<Tone, string> = {
         loading={eager ? "eager" : "lazy"}
         decoding="async"
         style={`object-position: ${mediaPosition}`}
-        class="absolute inset-0 h-full w-full object-cover"
+        class:list={[
+          "absolute top-0 right-0 bottom-0 object-cover",
+          padLeft ? "left-3" : "left-0 h-full w-full",
+        ]}
         data-card-poster
       />
     )}
@@ -72,7 +77,10 @@ const bodyClass: Record<Tone, string> = {
         src={video}
         poster={poster}
         style={`object-position: ${resolvedVideoPosition}`}
-        class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-300"
+        class:list={[
+          "absolute top-0 right-0 bottom-0 object-cover opacity-0 transition-opacity duration-300",
+          padLeft ? "left-3" : "left-0 h-full w-full",
+        ]}
         loop
         playsinline
         preload="metadata"
@@ -95,7 +103,7 @@ const bodyClass: Record<Tone, string> = {
       <button
         type="button"
         aria-label="Toggle audio"
-        class="absolute bottom-3 right-3 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-white ring-1 ring-white/25 backdrop-blur transition hover:bg-black/75"
+        class="absolute bottom-3 right-3 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/25 text-white backdrop-blur-sm transition hover:bg-black/45"
         data-card-mute-toggle
         data-muted="true"
       >
