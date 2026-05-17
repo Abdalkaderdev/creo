@@ -12,7 +12,6 @@ const features: Array<{
   alt: string;
   mediaPosition?: string;
   videoPosition?: string;
-  padLeft?: boolean;
 }> = [
   {
     title: "Character\nCreation",
@@ -21,7 +20,6 @@ const features: Array<{
     tone: "lavender",
     alt: "Character creation example",
     mediaPosition: "center top",
-    padLeft: true,
   },
   {
     title: "Product\nIntegrations",
@@ -129,8 +127,9 @@ const features: Array<{
 
     <div
       data-builtfor-track
-      class="mt-12 flex snap-x snap-mandatory gap-6 overflow-x-auto overflow-y-visible scroll-smooth px-6 pt-12 pb-24 [scrollbar-color:rgba(255,255,255,0.45)_rgba(255,255,255,0.12)] [scrollbar-width:thin] [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-white/10 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/40 hover:[&::-webkit-scrollbar-thumb]:bg-white/60"
+      class="mt-12 flex snap-x snap-mandatory gap-6 overflow-x-auto overflow-y-visible scroll-smooth pt-12 pb-24 [scroll-padding-left:1.5rem] [scrollbar-color:rgba(255,255,255,0.45)_rgba(255,255,255,0.12)] [scrollbar-width:thin] [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-white/10 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/40 hover:[&::-webkit-scrollbar-thumb]:bg-white/60"
     >
+      <div class="shrink-0 w-6" aria-hidden="true"></div>
       {features.map((f, i) => <BuiltForCard {...f} eager={i === 0} />)}
       <div class="shrink-0 w-6" aria-hidden="true"></div>
     </div>
