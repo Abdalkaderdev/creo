@@ -10,7 +10,7 @@ import IdCard from "./IdCard.astro";
   ></div>
   <div class="relative z-10 mx-auto max-w-6xl px-6">
     <div class="text-center">
-      <h2 class="mx-auto text-4xl font-black leading-none tracking-tight sm:text-6xl md:text-[5.5rem] lg:text-[7rem]">
+      <h2 class="mx-auto whitespace-nowrap text-[clamp(22px,7vw,30px)] font-black leading-none tracking-tight sm:text-5xl md:text-6xl lg:text-[6rem]">
         Workflow Intelligence<span class="text-creo-purple-bright">.</span>
       </h2>
       <p class="mx-auto mt-6 max-w-3xl text-pretty text-[15px] font-medium text-white sm:mt-8 sm:text-lg">
@@ -19,7 +19,7 @@ import IdCard from "./IdCard.astro";
       </p>
     </div>
 
-    <div class="mt-16 grid gap-6 md:grid-cols-3 md:gap-8" data-id-grid>
+    <div class="mt-16 grid auto-rows-fr gap-6 md:grid-cols-3 md:gap-8" data-id-grid>
       <IdCard icon="lucide:layout-template" title="Image Presets" body="Built-in prompt templates that give you a strong starting point for diverse creative use cases." />
       <IdCard icon="lucide:bot" title="AI Assistant" body="Troubleshoot unclear prompts, explore new approaches and clarify your intent for more accurate results." />
       <IdCard icon="lucide:wand-sparkles" title="Prompt Enhancer" body="Elevate simple prompts with refined language, added nuance, and richer detail — improving clarity and overall output quality." />
